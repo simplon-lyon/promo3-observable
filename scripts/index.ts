@@ -1,3 +1,3 @@
-import {Observable} from '@reactivex/rxjs';
+import {Observable} from 'rxjs/Observable';
 
 Observable.of('bloup');
