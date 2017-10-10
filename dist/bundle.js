@@ -6189,8 +6189,62 @@ exports.VirtualAction = VirtualAction;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const rxjs_1 = __webpack_require__(70);
-rxjs_1.Observable.of('bloup');
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJpbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLCtCQUFnQztBQUVoQyxpQkFBVSxDQUFDLEVBQUUsQ0FBQyxPQUFPLENBQUMsQ0FBQyJ9
+//On peut créer des observable à partir d'un peu n'importe
+//quoi en utilisant Observable.of
+const text$ = rxjs_1.Observable.of('bloup');
+//Les données seront transformées en flux de données
+//sur lequel on pourra "s'inscrire" en observateur
+//ça signifie que la fonction dans le subscribe sera
+//déclenchée à chaque nouvelle émission de valeur de
+//l'observable
+text$.subscribe((val) => console.log(val));
+//Observable.of([1,2,3]);
+const blank$ = rxjs_1.Observable.create((observer) => {
+    observer.next(1);
+    observer.next(2);
+    observer.next(3);
+    observer.complete();
+});
+blank$.subscribe((val) => console.log(val));
+//Faire un Observable sur le click du button avec
+//Observable.fromEvent (puis  subscribe sur cet Observable
+//et lui faire faire un console.log('click'))
+const button = document.querySelector('button');
+//Le fromEvent créera un Observable d'un event sur
+//un élément (html ou non) qui emettra à chaque
+//fois que l'event sera déclenché
+const click$ = rxjs_1.Observable.fromEvent(button, 'click');
+click$.subscribe((event) => console.log(event));
+//On peut créer un flux d'item à partir d'un tableau
+//en utilisant Observable.from, l'observable créé emettra
+//tous les items du tableau les uns après les autres
+const tableau$ = rxjs_1.Observable
+    .from(['ga', 'zo', 'bu', 'meu'])
+    .filter((item) => item.length <= 2)
+    .take(2);
+tableau$.subscribe((item) => console.log(item));
+//Faire un observable fromEvent sur un input type text
+//sur le keyup et afficher le contenu de l'input avec
+//un debounceTime de 300 ms
+//debounceTime attendra le temps qu'on lui indique entre
+//parenthèse pour émettre une donnée du flux, et annulera
+//cette émission si d'autres informations sont émises 
+//avant la fin du temps indiqué
+const input = document.querySelector('input');
+const keyup$ = rxjs_1.Observable.fromEvent(input, 'keyup')
+    .map((event) => event.keyCode)
+    .bufferTime(3000);
+const combo = [37, 39, 38, 40, 65, 65, 66, 66];
+keyup$.subscribe((value) => {
+    if ((value.length === combo.length)
+        && value.every((element, index) => element === combo[index])) {
+        alert('bravo');
+    }
+    else {
+        console.log('fail');
+    }
+});
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJpbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLCtCQUFnQztBQUVoQywwREFBMEQ7QUFDMUQsaUNBQWlDO0FBQ2pDLE1BQU0sS0FBSyxHQUFHLGlCQUFVLENBQUMsRUFBRSxDQUFDLE9BQU8sQ0FBQyxDQUFDO0FBQ3JDLG9EQUFvRDtBQUNwRCxrREFBa0Q7QUFDbEQsb0RBQW9EO0FBQ3BELG9EQUFvRDtBQUNwRCxjQUFjO0FBQ2QsS0FBSyxDQUFDLFNBQVMsQ0FBQyxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDO0FBRTNDLHlCQUF5QjtBQUN6QixNQUFNLE1BQU0sR0FBRyxpQkFBVSxDQUFDLE1BQU0sQ0FBQyxDQUFDLFFBQVEsRUFBRSxFQUFFO0lBQzFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUM7SUFDakIsUUFBUSxDQUFDLElBQUksQ0FBQyxDQUFDLENBQUMsQ0FBQztJQUNqQixRQUFRLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDO0lBQ2pCLFFBQVEsQ0FBQyxRQUFRLEVBQUUsQ0FBQztBQUN4QixDQUFDLENBQUMsQ0FBQztBQUVILE1BQU0sQ0FBQyxTQUFTLENBQUMsQ0FBQyxHQUFHLEVBQUUsRUFBRSxDQUFDLE9BQU8sQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQztBQUU1QyxpREFBaUQ7QUFDakQsMERBQTBEO0FBQzFELDZDQUE2QztBQUU3QyxNQUFNLE1BQU0sR0FBRyxRQUFRLENBQUMsYUFBYSxDQUFDLFFBQVEsQ0FBQyxDQUFDO0FBQ2hELGtEQUFrRDtBQUNsRCwrQ0FBK0M7QUFDL0MsaUNBQWlDO0FBQ2pDLE1BQU0sTUFBTSxHQUFHLGlCQUFVLENBQUMsU0FBUyxDQUFDLE1BQU0sRUFBRSxPQUFPLENBQUMsQ0FBQztBQUVyRCxNQUFNLENBQUMsU0FBUyxDQUFDLENBQUMsS0FBSyxFQUFFLEVBQUUsQ0FBQyxPQUFPLENBQUMsR0FBRyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7QUFDaEQsb0RBQW9EO0FBQ3BELHlEQUF5RDtBQUN6RCxvREFBb0Q7QUFDcEQsTUFBTSxRQUFRLEdBQUcsaUJBQVU7S0FDMUIsSUFBSSxDQUFDLENBQUMsSUFBSSxFQUFFLElBQUksRUFBRSxJQUFJLEVBQUUsS0FBSyxDQUFDLENBQUM7S0FDL0IsTUFBTSxDQUFDLENBQUMsSUFBSSxFQUFFLEVBQUUsQ0FBQyxJQUFJLENBQUMsTUFBTSxJQUFJLENBQUMsQ0FBQztLQUNsQyxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUM7QUFFVCxRQUFRLENBQUMsU0FBUyxDQUFDLENBQUMsSUFBSSxFQUFFLEVBQUUsQ0FBQyxPQUFPLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxDQUFDLENBQUM7QUFHaEQsc0RBQXNEO0FBQ3RELHFEQUFxRDtBQUNyRCwyQkFBMkI7QUFDM0Isd0RBQXdEO0FBQ3hELHlEQUF5RDtBQUN6RCxzREFBc0Q7QUFDdEQsK0JBQStCO0FBRS9CLE1BQU0sS0FBSyxHQUFHLFFBQVEsQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDLENBQUM7QUFFOUMsTUFBTSxNQUFNLEdBQUcsaUJBQVUsQ0FBQyxTQUFTLENBQUMsS0FBSyxFQUFFLE9BQU8sQ0FBQztLQUNsRCxHQUFHLENBQUMsQ0FBQyxLQUFtQixFQUFFLEVBQUUsQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDO0tBQzNDLFVBQVUsQ0FBQyxJQUFJLENBQUMsQ0FBQztBQUVsQixNQUFNLEtBQUssR0FBRyxDQUFDLEVBQUUsRUFBRSxFQUFFLEVBQUUsRUFBRSxFQUFFLEVBQUUsRUFBRSxFQUFFLEVBQUUsRUFBRSxFQUFFLEVBQUUsRUFBRSxFQUFFLENBQUMsQ0FBQztBQUUvQyxNQUFNLENBQUMsU0FBUyxDQUFDLENBQUMsS0FBSyxFQUFFLEVBQUU7SUFDdkIsRUFBRSxDQUFBLENBQUMsQ0FBQyxLQUFLLENBQUMsTUFBTSxLQUFLLEtBQUssQ0FBQyxNQUFNLENBQUM7V0FDM0IsS0FBSyxDQUFDLEtBQUssQ0FBQyxDQUFDLE9BQU8sRUFBRSxLQUFLLEVBQUUsRUFBRSxDQUNqQyxPQUFPLEtBQUssS0FBSyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDO1FBQzdCLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQztJQUNuQixDQUFDO0lBQUEsSUFBSSxDQUFDLENBQUM7UUFDSCxPQUFPLENBQUMsR0FBRyxDQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQ3hCLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyJ9
 
 /***/ }),
 /* 70 */
