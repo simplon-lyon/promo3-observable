@@ -52,18 +52,46 @@ tableau$.subscribe((item) => console.log(item));
 
 const input = document.querySelector('input');
 
-const keyup$ = Observable.fromEvent(input, 'keyup')
-.map((event:KeyboardEvent) => event.keyCode)
-.bufferTime(3000);
+// const keyup$ = Observable.fromEvent(input, 'keyup')
+// .map((event:KeyboardEvent) => event.keyCode)
+// .bufferTime(3000);
 
-const combo = [37, 39, 38, 40, 65, 65, 66, 66];
+// const combo = [37, 39, 38, 40, 65, 65, 66, 66];
 
-keyup$.subscribe((value) => {
-    if((value.length === combo.length) 
-        && value.every((element, index) =>
-         element === combo[index])) {
-        alert('bravo');
-    }else {
-        console.log('fail');
-    }
-});
+// keyup$.subscribe((value) => {
+//     if((value.length === combo.length) 
+//         && value.every((element, index) =>
+//          element === combo[index])) {
+//         alert('bravo');
+//     }else {
+//         console.log('fail');
+//     }
+// });
+
+
+const inputs = document.querySelectorAll('input');
+
+const nom$ = Observable.fromEvent(inputs[0], 'keyup')
+.map((event:any) => event.target.value)
+.filter(value => value !== '');
+
+const prenom$ = Observable.fromEvent(inputs[1], 'keyup')
+.map((event:any) => event.target.value)
+.filter(value => value !== '');
+
+const age$ = Observable.fromEvent(inputs[2], 'keyup')
+.map((event:any) => event.target.value)
+.filter(value => value !== '');
+
+
+const personne$ = 
+        Observable.combineLatest(nom$,prenom$,age$)
+        .map((values) => {
+            return {
+                nom: values[0],
+                prenom: values[1],
+                age: values[2]
+            }
+        }).debounceTime(300);
+
+personne$.subscribe((personne) => console.log(personne));
