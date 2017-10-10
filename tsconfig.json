@@ -3,7 +3,7 @@
         "target": "es2015",
         "inlineSourceMap": true,
         "watch": true,
-        "module": "es2015"
+        "module": "commonjs"
     },
     "exclude": [
         "node_modules"
